@@ -1,0 +1,155 @@
+<?xml version="1.0" ?>
+
+<%
+# ----------------
+#  Parameters
+# ----------------
+
+M   = 1.0
+m1  = 0.1
+m2  = 0.1
+l1  = 1
+l2  = 1
+
+height = 1.1 * (l1 + l2)
+%>
+
+
+<sdf version="1.5">
+  <model name="Inverted_Double_Pendulum">
+    <pose>0.0 0.0 0.0 0.0 0.0 0.0</pose>
+    <static>false</static>
+    <self_collide>false</self_collide>
+
+    <link name="base_link">
+    <pose>0.0 0.0 <%= height %> 0.0 0.0 0.0</pose>
+    <inertial>
+      <pose>0 0 <%= -height %> 0 0 0</pose>
+      <inertia>
+        <ixx>0.1</ixx>
+        <ixy>0.0</ixy>
+        <ixz>0.0</ixz>
+        <iyy>0.1</iyy>
+        <iyz>0.0</iyz>
+        <izz>0.1</izz>
+      </inertia>
+      <mass><%= 0.1 %></mass>
+    </inertial>
+    <visual name="base_visual">
+      <pose>0.0 0.0 -0.05 0.0 0.0 0.0</pose>
+      <geometry>
+        <box>
+          <size>10.0 0.1 0.1</size>
+        </box>
+      </geometry>
+    </visual>
+    </link>
+
+    <joint name="fixed_to_ground" type="fixed">
+    <parent>world</parent>
+    <child>base_link</child>
+    </joint>
+
+    <link name="cart_link">
+    <pose>0.0 0.0 <%= height %> 0.0 0.0 0.0</pose>
+    <inertial>
+      <pose>0.0 0.0 0.0 0.0 0.0 0.0</pose>
+      <inertia>
+        <ixx><%= M*(0.25*0.25 + 0.25*0.25)/12 %></ixx>
+        <ixy>0</ixy>
+        <ixz>0</ixz>
+        <iyy><%= M*(0.5*0.5 + 0.25*0.25)/12 %></iyy>
+        <iyz>0</iyz>
+        <izz><%= M*(0.5*0.5 + 0.25*0.25)/12 %></izz>
+      </inertia>
+      <mass><%= M %></mass>
+    </inertial>
+      <visual name="cart_visual">
+        <pose>0.0 0.0 -0.125 0.0 0.0 0.0</pose>
+        <geometry>
+          <box>
+            <size>0.5 0.25 0.25</size>
+          </box>
+        </geometry>
+      </visual>
+    </link>
+
+    <joint name="cart_joint" type="prismatic">
+    <parent>base_link</parent>
+    <child>cart_link</child>
+    </joint>
+
+    <link name="firstpendulum_link">
+    <pose>0 0 <%= height %> 0 0 0</pose>
+    <inertial>
+      <pose>0 0 <%= (l1/2.0) %> 0 0 0</pose>
+      <inertia>
+        <ixx><%= m1*(0.05*0.05 + l1*l1)/12 %></ixx>
+        <ixy>0</ixy>
+        <ixz>0</ixz>
+        <iyy><%= m1*(0.05*0.05 + l1*l1)/12 %></iyy>
+        <iyz>0</iyz>
+        <izz><%= m1*(0.05*0.05 + 0.05*0.05)/12 %></izz>
+      </inertia>
+      <mass><%= m1 %></mass>
+    </inertial>
+      <visual name="firstpendulum_visual">
+        <pose>0 0 <%= (l1/2.0) %> 0 0 0</pose>
+        <geometry>
+          <box>
+            <size>0.05 0.05 <%= l1 %></size>
+          </box>
+        </geometry>
+      </visual>
+    </link>
+
+    <joint name="firstpendulum_joint" type="revolute">
+    <parent>cart_link</parent>
+    <child>firstpendulum_link</child>
+    <axis>
+      <xyz>0 1 0</xyz>
+    </axis>
+    </joint>
+
+    <link name="secondpendulum_link">
+    <pose>0 0 <%= height + l1 %> 0 0 0</pose>
+    <inertial>
+      <pose>0 0 <%= (l2/2.0) %> 0 0 0</pose>
+      <inertia>
+        <ixx><%= m2*(0.05*0.05 + l1*l1)/12 %></ixx>
+        <ixy>0</ixy>
+        <ixz>0</ixz>
+        <iyy><%= m2*(0.05*0.05 + l1*l1)/12 %></iyy>
+        <iyz>0</iyz>
+        <izz><%= m2*(0.05*0.05 + 0.05*0.05)/12 %></izz>
+      </inertia>
+      <mass><%= m2 %></mass>
+    </inertial>
+      <visual name="secondpendulum_visual">
+        <pose>0 0 <%= (l2/2.0) %> 0 0 0</pose>
+        <geometry>
+          <box>
+            <size>0.05 0.05 <%= l2 %></size>
+          </box>
+        </geometry>
+      </visual>
+    </link>
+
+    <joint name="secondpendulum_joint" type="revolute">
+    <parent>firstpendulum_link</parent>
+    <child>secondpendulum_link</child>
+    <axis>
+      <xyz>0 1 0</xyz>
+    </axis>
+    </joint>
+
+
+    <plugin name="pendulum_stabilization" filename="libpendulum_stabilization.so">
+    <cart_joint>cart_joint</cart_joint>
+    <first_pendulum_joint>firstpendulum_joint</first_pendulum_joint>
+    <second_pendulum_joint>secondpendulum_joint</second_pendulum_joint>
+    </plugin>
+
+
+  </model>
+</sdf>
