@@ -4,6 +4,8 @@ project(ukf_example)
 # Load catkin and all dependencies required for this package
 find_package(catkin REQUIRED COMPONENTS
   roscpp
+  gazebo_ros
+  ukf_example_srvs
 )
 
 # Depend on system install of Gazebo
@@ -18,14 +20,17 @@ include_directories(include
   ${Boost_INCLUDE_DIR}
   ${catkin_INCLUDE_DIRS}
   ${GAZEBO_INCLUDE_DIRS}
-#  /usr/include/gazebo-7/gazebo
-#  /usr/include/sdformat-4.1
+  ${SDFormat_INCLUDE_DIRS}
 )
-
 
 link_directories(
   ${GAZEBO_LIBRARY_DIRS}
 )
+
+generate_messages(
+    DEPENDENCIES
+    ukf_example_srvs
+    )
 
 catkin_package(
   INCLUDE_DIRS include
@@ -38,12 +43,16 @@ catkin_package(
     gazebo_ros
     gazebo
     SDF
+    message_runtime
+    ukf_example_srvs
 )
 
 # Gazebo Plugin
 add_library(pendulum_stabilization SHARED
     src/pendulum_stabilization_class.cpp
     )
+
+add_dependencies(pendulum_stabilization ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 ## Specify libraries to link a library or executable target against
 target_link_libraries(pendulum_stabilization

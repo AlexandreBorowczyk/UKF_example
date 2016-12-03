@@ -6,14 +6,21 @@
 
 #include <sdf/Param.hh>
 
+#include <ukf_example_srvs/ComputeCommand.h>
+
 namespace gazebo
 {
 
 PendulumStabilizationPlugin::PendulumStabilizationPlugin() : ModelPlugin() {
-  gzmsg << "MotionControllerPlugin: Created.\n";
+  gzmsg << "PendulumStabilizationPlugin: Created.\n";
 }
 
 PendulumStabilizationPlugin::~PendulumStabilizationPlugin(){
+
+  nh_->shutdown();
+
+  delete nh_;
+  nh_ = nullptr;
 
   gzmsg << "PendulumStabilizationPlugin: Destroyed.\n";
 
@@ -21,9 +28,24 @@ PendulumStabilizationPlugin::~PendulumStabilizationPlugin(){
 
 void PendulumStabilizationPlugin::Load(physics::ModelPtr _parent, sdf::ElementPtr _sdf) {
 
+  if (!ros::isInitialized()) {
+    ROS_FATAL_STREAM("A ROS node for Gazebo has not been initialized, unable to load plugin.");
+    return;
+  }
+
+  nh_ = new ros::NodeHandle();
+
+  if(nh_->ok()) {
+
+    control_client_ = nh_->serviceClient<ukf_example_srvs::ComputeCommand>("ComputeCommandDip");
+    gzmsg << "PendulumStabilizationPlugin: Ros Node handle and service client created.\n";
+
+  }
+
   // Store the pointer to the model
-  this->model_ = _parent;
-  this->sdf_ = _sdf;
+  model_ = _parent;
+  sdf_ = _sdf;
+
 
 
   cart_joint_ = GetJoint("cart_joint");
@@ -42,7 +64,7 @@ void PendulumStabilizationPlugin::Load(physics::ModelPtr _parent, sdf::ElementPt
     this->update_connection_ = event::Events::ConnectWorldUpdateBegin(
                                  boost::bind(&PendulumStabilizationPlugin::OnUpdate, this, _1));
 
-    gzmsg << "MotionControllerPlugin: Loaded.\n";
+    gzmsg << "PendulumStabilizationPlugin: Loaded.\n";
 
   }
 }
@@ -51,9 +73,25 @@ void PendulumStabilizationPlugin::Load(physics::ModelPtr _parent, sdf::ElementPt
 
 void PendulumStabilizationPlugin::OnUpdate(const common::UpdateInfo & /*_info*/) {
 
-  first_pendulum_joint_->SetPosition(0,1);
-  second_pendulum_joint_->SetPosition(0,1);
+  double current_time = model_->GetWorld()->GetSimTime().Double();
 
+  if((current_time - previous_iteration_time_) > 0.1) {
+    previous_iteration_time_ = current_time;
+
+    ukf_example_srvs::ComputeCommand srv;
+
+    srv.request.x         = cart_joint_->GetAngle(0).Radian();
+    srv.request.dot_x     = cart_joint_->GetVelocity(0);
+    srv.request.theta     = first_pendulum_joint_->GetAngle(0).Radian();
+    srv.request.dot_theta = first_pendulum_joint_->GetVelocity(0);
+    srv.request.phi       = second_pendulum_joint_->GetAngle(0).Radian();
+    srv.request.dot_phi   = second_pendulum_joint_->GetVelocity(0);
+
+    if(control_client_.call(srv)) {
+      cart_joint_->SetForce(0,srv.response.force);
+    }
+
+  }
 }
 
 physics::JointPtr PendulumStabilizationPlugin::GetJoint(const std::string& element_name) {

@@ -27,8 +27,11 @@
 
 
   <buildtool_depend>catkin</buildtool_depend>
-
+  <depend>message_generation</depend>
+  <depend>message_runtime</depend>
+  <depend>ukf_example_srvs</depend>
   <depend>gazebo</depend>
+  <depend>gazebo_ros</depend>
   <depend>roscpp</depend>
   <depend>Boost</depend>
   <depend>thread</depend>

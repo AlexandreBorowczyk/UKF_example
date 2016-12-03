@@ -1,0 +1,10 @@
+<launch>
+<!--
+  <node name="gazebo_ros_node" pkg="gazebo_ros" type="gazebo"
+   respawn="false" output="screen" />
+-->
+  <node name="double_inverted_pedulum_node" pkg="gazebo_ros" type="spawn_model"
+   args="-file /home/aborowczyk/Documents/ukf_ws/src/ukf_example/ukf_example/models/double_inverted_pendulum/model.sdf -sdf -model Double_Inverted_Pendulum"
+   respawn="false" output="screen" />
+
+</launch>

@@ -1,6 +1,8 @@
 #ifndef PENDULUMSTABILIZATIONPLUGIN_H_
 #define PENDULUMSTABILIZATIONPLUGIN_H_
 
+#include <ros/ros.h>
+
 #include <gazebo/gazebo.hh>
 #include <gazebo/physics/physics.hh>
 #include <gazebo/common/common.hh>
@@ -17,9 +19,14 @@ class GAZEBO_VISIBLE PendulumStabilizationPlugin : public ModelPlugin {
         void OnUpdate(const common::UpdateInfo & /*_info*/);
 
 
-        // Pointer to the model
     private:
 
+        // Ros
+
+        ros::NodeHandle* nh_;
+        ros::ServiceClient control_client_;
+
+        // Gazebo
         physics::JointPtr GetJoint(const std::string& element_name);
 
         physics::ModelPtr       model_;
@@ -30,6 +37,10 @@ class GAZEBO_VISIBLE PendulumStabilizationPlugin : public ModelPlugin {
         physics::JointPtr       cart_joint_;
         physics::JointPtr       first_pendulum_joint_;
         physics::JointPtr       second_pendulum_joint_;
+
+        // Pendulum Stabilization
+
+        double previous_iteration_time_;
 
 };
 
