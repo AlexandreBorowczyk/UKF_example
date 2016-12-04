@@ -1,4 +1,7 @@
 function [dot_x] = SystemDerivatives(~,x)
+format long
+
+u =0;
 
 % System parameters
 
@@ -63,27 +66,30 @@ F = [0 -drag1*dot_theta1+drag2*(dot_theta2-dot_theta1) drag2*(dot_theta1-dot_the
  matrix_3 = [zeros(3,1); D\H];
  
  matrix_4 = [zeros(3,1); D\F];
- 
- u = 0;
- 
- % SDRE controler
- 
- G_sd = zeros(3);
- 
- if(0.009 < abs(theta1))
-    G_sd(2,2) = -f1 * sin(theta1)/theta1;    
- end
- 
- if(0.009 < abs(theta2))
-    G_sd(3,3) = -f2 * sin(theta2)/theta2;    
- end
- A = [ zeros(3), eye(3);
-      -D\G_sd,  -D\C];
+  
+ %% SDRE controler
 
-% dG = diag([0, -f1*cos(theta1)*dot_theta1, -f2*cos(theta2)*dot_theta2]);
-% 
-% A = [ zeros(3), eye(3);
-%      -D\dG,  -D\C];
+ 
+%  G_sd = zeros(3);
+%  
+%  if(0.009 < abs(theta1))
+%     G_sd(2,2) = -f1 * sin(theta1)/theta1;    
+%  end
+%  
+%  if(0.009 < abs(theta2))
+%     G_sd(3,3) = -f2 * sin(theta2)/theta2;    
+%  end
+%  A = [ zeros(3), eye(3);
+%       -D\G_sd,  -D\C];
+
+% D = [d1,  d2,  d3;
+%      d2,  d4,  d5;
+%      d3,  d5,  d6];
+  
+dG = diag([0, -f1*cos(theta1), -f2*cos(theta2)]);
+ 
+A = [ zeros(3), eye(3);
+     -D\dG,  -D\C];
 
 B = [zeros(3,1);
     D\H];
