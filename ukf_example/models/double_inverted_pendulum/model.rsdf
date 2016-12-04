@@ -5,13 +5,28 @@
 #  Parameters
 # ----------------
 
-M   = 1.0
-m1  = 0.1
-m2  = 0.1
-l1  = 1
-l2  = 1
+# Visual
+R  = 0.025 # rod radius (m)
 
-height = 1.1 * (l1 + l2)
+# Cart
+m0   = 1.0 # Mass (kg)
+
+# Pendulum 1
+m1  = 0.775 # Mass (kg)
+L1  = 0.356 # Length (m)
+a1  = 0.18 # CoG (m)
+J1  = 0.0224 # Moment of inertia (N m s²)
+d1  = 0.005 # Friction constant (N m s)
+
+# Pendulum 2
+m2  = 0.654 # Mass (kg)
+L2  = 0.356 # Length (m)
+a2  = 0.148 # CoG (m)
+J2  = 0.0179 # Moment of inertia (N m s²)
+d2  = 0.005 # Friction constant (N m s)
+
+# Misc
+height = 1.1 * (L1 + L2)
 %>
 
 
@@ -36,11 +51,12 @@ height = 1.1 * (l1 + l2)
       <mass><%= 0.1 %></mass>
     </inertial>
     <visual name="base_visual">
-      <pose>0.0 0.0 -0.05 0.0 0.0 0.0</pose>
+      <pose>0.0 0.0 -0.05 0.0 1.57079632679 0.0</pose>
       <geometry>
-        <box>
-          <size>10.0 0.1 0.1</size>
-        </box>
+        <cylinder>
+          <radius><%= R %></radius>
+          <length>10.0</length>
+        </cylinder>
       </geometry>
     </visual>
     </link>
@@ -55,20 +71,20 @@ height = 1.1 * (l1 + l2)
     <inertial>
       <pose>0.0 0.0 0.0 0.0 0.0 0.0</pose>
       <inertia>
-        <ixx><%= M*(0.25*0.25 + 0.25*0.25)/12 %></ixx>
+        <ixx><%= m0*(0.15*0.15 + 0.15*0.15)/12 %></ixx>
         <ixy>0</ixy>
         <ixz>0</ixz>
-        <iyy><%= M*(0.5*0.5 + 0.25*0.25)/12 %></iyy>
+        <iyy><%= m0*(0.2*0.2 + 0.15*0.15)/12 %></iyy>
         <iyz>0</iyz>
-        <izz><%= M*(0.5*0.5 + 0.25*0.25)/12 %></izz>
+        <izz><%= m0*(0.2*0.2 + 0.15*0.15)/12 %></izz>
       </inertia>
-      <mass><%= M %></mass>
+      <mass><%= m0 %></mass>
     </inertial>
       <visual name="cart_visual">
-        <pose>0.0 0.0 -0.125 0.0 0.0 0.0</pose>
+        <pose>0.0 0.0 -0.075 0.0 0.0 0.0</pose>
         <geometry>
           <box>
-            <size>0.5 0.25 0.25</size>
+            <size>0.2 0.15 0.15</size>
           </box>
         </geometry>
       </visual>
@@ -82,24 +98,31 @@ height = 1.1 * (l1 + l2)
     <link name="firstpendulum_link">
     <pose>0 0 <%= height %> 0 0 0</pose>
     <inertial>
-      <pose>0 0 <%= (l1/2.0) %> 0 0 0</pose>
+      <pose>0 0 <%= a1 %> 0 0 0</pose>
       <inertia>
-        <ixx><%= m1*(0.05*0.05 + l1*l1)/12 %></ixx>
+        <ixx><%= J1 %></ixx>
         <ixy>0</ixy>
         <ixz>0</ixz>
-        <iyy><%= m1*(0.05*0.05 + l1*l1)/12 %></iyy>
+        <iyy><%= J1 %></iyy>
         <iyz>0</iyz>
-        <izz><%= m1*(0.05*0.05 + 0.05*0.05)/12 %></izz>
+        <izz><%= 0.5*m1*R*R %></izz>
       </inertia>
       <mass><%= m1 %></mass>
     </inertial>
       <visual name="firstpendulum_visual">
-        <pose>0 0 <%= (l1/2.0) %> 0 0 0</pose>
+        <pose>0 0 <%= (L1/2.0) %> 0 0 0</pose>
         <geometry>
-          <box>
-            <size>0.05 0.05 <%= l1 %></size>
-          </box>
+          <cylinder>
+            <radius><%= R %></radius>
+            <length><%= L1 %></length>
+          </cylinder>
         </geometry>
+        <material>
+          <script>
+            <uri>file://media/materials/scripts/gazebo.material</uri>
+            <name>Gazebo/Blue</name>
+          </script>
+        </material>
       </visual>
     </link>
 
@@ -108,30 +131,40 @@ height = 1.1 * (l1 + l2)
     <child>firstpendulum_link</child>
     <axis>
       <xyz>0 1 0</xyz>
+      <dynamics>
+        <damping><%= d1 %></damping>
+      </dynamics>
     </axis>
     </joint>
 
     <link name="secondpendulum_link">
-    <pose>0 0 <%= height + l1 %> 0 0 0</pose>
+    <pose>0 0 <%= height + L1 %> 0 0 0</pose>
     <inertial>
-      <pose>0 0 <%= (l2/2.0) %> 0 0 0</pose>
+      <pose>0 0 <%= a2 %> 0 0 0</pose>
       <inertia>
-        <ixx><%= m2*(0.05*0.05 + l1*l1)/12 %></ixx>
+        <ixx><%= J2 %></ixx>
         <ixy>0</ixy>
         <ixz>0</ixz>
-        <iyy><%= m2*(0.05*0.05 + l1*l1)/12 %></iyy>
+        <iyy><%= J2  %></iyy>
         <iyz>0</iyz>
-        <izz><%= m2*(0.05*0.05 + 0.05*0.05)/12 %></izz>
+        <izz><%= 0.5*m1*R*R  %></izz>
       </inertia>
       <mass><%= m2 %></mass>
     </inertial>
       <visual name="secondpendulum_visual">
-        <pose>0 0 <%= (l2/2.0) %> 0 0 0</pose>
+        <pose>0 0 <%= (L2/2.0) %> 0 0 0</pose>
         <geometry>
-          <box>
-            <size>0.05 0.05 <%= l2 %></size>
-          </box>
+          <cylinder>
+            <radius><%= R %></radius>
+            <length><%= L2 %></length>
+          </cylinder>
         </geometry>
+        <material>
+          <script>
+            <uri>file://media/materials/scripts/gazebo.material</uri>
+            <name>Gazebo/Red</name>
+          </script>
+        </material>
       </visual>
     </link>
 
@@ -140,6 +173,9 @@ height = 1.1 * (l1 + l2)
     <child>secondpendulum_link</child>
     <axis>
       <xyz>0 1 0</xyz>
+      <dynamics>
+        <damping><%= d2 %></damping>
+      </dynamics>
     </axis>
     </joint>
 
