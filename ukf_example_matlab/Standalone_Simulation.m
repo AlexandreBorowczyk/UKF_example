@@ -1,8 +1,10 @@
 clear var
 clc
 
+format long
+
 % X: x, theta1, theta2, dot_x, dot_theta1, dot_theta2 
-x_init = [0.0, 0.001, 0.0, 0.0, 0.0, 0.0]';
+x_init = [0.0, deg2rad(5), deg2rad(-5), 0.0, 0.0, 0.0]';
 
 tspan = [0:0.001:10]';
 
