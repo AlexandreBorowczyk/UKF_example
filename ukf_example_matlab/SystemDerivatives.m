@@ -46,58 +46,53 @@ dot_theta1  = x(5);
 dot_theta2  = x(6);
 
 D = [d1,              d2*cos(theta1),         d3*cos(theta2);
-     d2*cos(theta1),  d4,                     d5*cos(theta1-theta2);
-     d3*cos(theta2),  d5*cos(theta1-theta2)   d6];
- 
+    d2*cos(theta1),  d4,                     d5*cos(theta1-theta2);
+    d3*cos(theta2),  d5*cos(theta1-theta2)   d6];
+
 C = [0, -d2*sin(theta1)*dot_theta1,        -d3*sin(theta2)*dot_theta2;
-     0,  0,                                 d5*sin(theta1-theta2)*dot_theta2;
-     0  -d5*sin(theta1-theta2)*dot_theta1,  0];
- 
+    0,  0,                                 d5*sin(theta1-theta2)*dot_theta2;
+    0  -d5*sin(theta1-theta2)*dot_theta1,  0];
+
 G = [0, -f1*sin(theta1), -f2*sin(theta2)]';
- 
+
 H = [1 0 0]';
 
 F = [0 -drag1*dot_theta1+drag2*(dot_theta2-dot_theta1) drag2*(dot_theta1-dot_theta2)]';
- 
- matrix_1 = [zeros(3), eye(3);
-             zeros(3), -D\C];
- matrix_2 = [zeros(3,1); -D\G];
- 
- matrix_3 = [zeros(3,1); D\H];
- 
- matrix_4 = [zeros(3,1); D\F];
-  
- %% SDRE controler
 
- 
-%  G_sd = zeros(3);
-%  
-%  if(0.009 < abs(theta1))
-%     G_sd(2,2) = -f1 * sin(theta1)/theta1;    
-%  end
-%  
-%  if(0.009 < abs(theta2))
-%     G_sd(3,3) = -f2 * sin(theta2)/theta2;    
-%  end
-%  A = [ zeros(3), eye(3);
-%       -D\G_sd,  -D\C];
+matrix_1 = [zeros(3), eye(3);
+    zeros(3), -D\C];
+matrix_2 = [zeros(3,1); -D\G];
 
-% D = [d1,  d2,  d3;
-%      d2,  d4,  d5;
-%      d3,  d5,  d6];
-  
-dG = diag([0, -f1*cos(theta1), -f2*cos(theta2)]);
- 
+matrix_3 = [zeros(3,1); D\H];
+
+matrix_4 = [zeros(3,1); D\F];
+
+% SDRE controler
+if 1
+    G = zeros(3);
+    if(deg2rad(0.0001) < abs(theta1))
+        G(2,2) = -f1 * sin(theta1)/theta1;
+    end
+    
+    if(deg2rad(0.0001) < abs(theta2))
+        G(3,3) = -f2 * sin(theta2)/theta2;
+    end
+else
+    %LQR
+    G = diag([0, -f1*cos(theta1), -f2*cos(theta2)]);
+
+end
+
+
 A = [ zeros(3), eye(3);
-     -D\dG,  -D\C];
+    -D\G,  -D\C];
 
 B = [zeros(3,1);
     D\H];
- 
+
 [P,L,G] = care(A,B,Q,R);
 
 u = -R\B'*P*x;
- 
+
 dot_x = matrix_1 * x + matrix_2 + matrix_3 * u + matrix_4;
 
-     
