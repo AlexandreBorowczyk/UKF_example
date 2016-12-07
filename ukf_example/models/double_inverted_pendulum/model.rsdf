@@ -9,20 +9,20 @@
 R  = 0.025 # rod radius (m)
 
 # Cart
-m0   = 1.0 # Mass (kg)
+m0   = 1.5 # Mass (kg)
 
 # Pendulum 1
-m1  = 0.775 # Mass (kg)
-L1  = 0.356 # Length (m)
-a1  = 0.18 # CoG (m)
-J1  = 0.0224 # Moment of inertia (N m s²)
+m1  = 0.5 # Mass (kg)
+L1  = 0.5 # Length (m)
+a1  = 0.25 # CoG (m)
+J1  = m1 * L1 * L1 / 12 # Moment of inertia (N m s²)
 d1  = 0.005 # Friction constant (N m s)
 
 # Pendulum 2
-m2  = 0.654 # Mass (kg)
-L2  = 0.356 # Length (m)
-a2  = 0.148 # CoG (m)
-J2  = 0.0179 # Moment of inertia (N m s²)
+m2  = 0.75 # Mass (kg)
+L2  = 0.75 # Length (m)
+a2  = 0.375 # CoG (m)
+J2  = m2 * L2 * L2 / 12 # Moment of inertia (N m s²)
 d2  = 0.005 # Friction constant (N m s)
 
 # Misc
