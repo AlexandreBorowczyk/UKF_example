@@ -13,8 +13,6 @@ find_package(gazebo REQUIRED)
 find_package(Boost REQUIRED COMPONENTS thread)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${GAZEBO_CXX_FLAGS}")
 
-
-#message(${GAZEBO_INCLUDE_DIRS})
 include_directories(include
   /usr/include
   ${Boost_INCLUDE_DIR}
