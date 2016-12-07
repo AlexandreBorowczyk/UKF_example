@@ -75,7 +75,7 @@ void PendulumStabilizationPlugin::OnUpdate(const common::UpdateInfo & /*_info*/)
 
   double current_time = model_->GetWorld()->GetSimTime().Double();
 
-  if((current_time - previous_iteration_time_) > 0.1) {
+  if((current_time - previous_iteration_time_) > 0.02) {
     previous_iteration_time_ = current_time;
 
     ukf_example_srvs::ComputeCommand srv;

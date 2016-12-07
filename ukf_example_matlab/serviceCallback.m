@@ -42,6 +42,8 @@ f2 = 0.5 * m2 * L2 * g;
 
 % System dynamics
 
+x = [reqmsg.X, reqmsg.Theta, reqmsg.Phi, reqmsg.DotX, reqmsg.DotTheta, reqmsg.DotPhi]';
+
 theta1      = x(2);
 theta2      = x(3);
 dot_theta1  = x(5);
