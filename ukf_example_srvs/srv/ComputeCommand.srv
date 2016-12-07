@@ -1,0 +1,9 @@
+# Compute desired force from model state
+float64 x
+float64 dot_x
+float64 theta
+float64 dot_theta
+float64 phi
+float64 dot_phi
+---
+float64 force
