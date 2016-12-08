@@ -62,8 +62,8 @@ height = 1.1 * (L1 + L2)
     </link>
 
     <joint name="fixed_to_ground" type="fixed">
-    <parent>world</parent>
-    <child>base_link</child>
+      <parent>world</parent>
+      <child>base_link</child>
     </joint>
 
     <link name="cart_link">
@@ -91,8 +91,15 @@ height = 1.1 * (L1 + L2)
     </link>
 
     <joint name="cart_joint" type="prismatic">
-    <parent>base_link</parent>
-    <child>cart_link</child>
+      <parent>base_link</parent>
+      <child>cart_link</child>
+      <axis>
+        <xyz>1 0 0</xyz>
+        <limit>
+          <lower>-10</lower>
+          <upper>10</upper>
+        </limit>
+      </axis>
     </joint>
 
     <link name="firstpendulum_link">
