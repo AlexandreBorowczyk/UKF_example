@@ -10,9 +10,9 @@
     <self_collide>false</self_collide>
 
     <link name="base_link">
-    <pose>0.0 0.0 2.2 0.0 0.0 0.0</pose>
+    <pose>0.0 0.0 1.375 0.0 0.0 0.0</pose>
     <inertial>
-      <pose>0 0 -2.2 0 0 0</pose>
+      <pose>0 0 -1.375 0 0 0</pose>
       <inertia>
         <ixx>0.1</ixx>
         <ixy>0.0</ixy>
@@ -24,11 +24,12 @@
       <mass>0.1</mass>
     </inertial>
     <visual name="base_visual">
-      <pose>0.0 0.0 -0.05 0.0 0.0 0.0</pose>
+      <pose>0.0 0.0 -0.05 0.0 1.57079632679 0.0</pose>
       <geometry>
-        <box>
-          <size>10.0 0.1 0.1</size>
-        </box>
+        <cylinder>
+          <radius>0.025</radius>
+          <length>10.0</length>
+        </cylinder>
       </geometry>
     </visual>
     </link>
@@ -39,24 +40,24 @@
     </joint>
 
     <link name="cart_link">
-    <pose>0.0 0.0 2.2 0.0 0.0 0.0</pose>
+    <pose>0.0 0.0 1.375 0.0 0.0 0.0</pose>
     <inertial>
       <pose>0.0 0.0 0.0 0.0 0.0 0.0</pose>
       <inertia>
-        <ixx>0.010416666666666666</ixx>
+        <ixx>0.005625000000000001</ixx>
         <ixy>0</ixy>
         <ixz>0</ixz>
-        <iyy>0.026041666666666668</iyy>
+        <iyy>0.0078125</iyy>
         <iyz>0</iyz>
-        <izz>0.026041666666666668</izz>
+        <izz>0.0078125</izz>
       </inertia>
-      <mass>1.0</mass>
+      <mass>1.5</mass>
     </inertial>
       <visual name="cart_visual">
-        <pose>0.0 0.0 -0.125 0.0 0.0 0.0</pose>
+        <pose>0.0 0.0 -0.075 0.0 0.0 0.0</pose>
         <geometry>
           <box>
-            <size>0.5 0.25 0.25</size>
+            <size>0.2 0.15 0.15</size>
           </box>
         </geometry>
       </visual>
@@ -68,26 +69,33 @@
     </joint>
 
     <link name="firstpendulum_link">
-    <pose>0 0 2.2 0 0 0</pose>
+    <pose>0 0 1.375 0 0 0</pose>
     <inertial>
-      <pose>0 0 0.5 0 0 0</pose>
+      <pose>0 0 0.25 0 0 0</pose>
       <inertia>
-        <ixx>0.008354166666666668</ixx>
+        <ixx>0.010416666666666666</ixx>
         <ixy>0</ixy>
         <ixz>0</ixz>
-        <iyy>0.008354166666666668</iyy>
+        <iyy>0.010416666666666666</iyy>
         <iyz>0</iyz>
-        <izz>4.166666666666668e-05</izz>
+        <izz>0.00015625000000000003</izz>
       </inertia>
-      <mass>0.1</mass>
+      <mass>0.5</mass>
     </inertial>
       <visual name="firstpendulum_visual">
-        <pose>0 0 0.5 0 0 0</pose>
+        <pose>0 0 0.25 0 0 0</pose>
         <geometry>
-          <box>
-            <size>0.05 0.05 1</size>
-          </box>
+          <cylinder>
+            <radius>0.025</radius>
+            <length>0.5</length>
+          </cylinder>
         </geometry>
+        <material>
+          <script>
+            <uri>file://media/materials/scripts/gazebo.material</uri>
+            <name>Gazebo/Blue</name>
+          </script>
+        </material>
       </visual>
     </link>
 
@@ -96,30 +104,40 @@
     <child>firstpendulum_link</child>
     <axis>
       <xyz>0 1 0</xyz>
+      <dynamics>
+        <damping>0.005</damping>
+      </dynamics>
     </axis>
     </joint>
 
     <link name="secondpendulum_link">
-    <pose>0 0 3.2 0 0 0</pose>
+    <pose>0 0 1.875 0 0 0</pose>
     <inertial>
-      <pose>0 0 0.5 0 0 0</pose>
+      <pose>0 0 0.375 0 0 0</pose>
       <inertia>
-        <ixx>0.008354166666666668</ixx>
+        <ixx>0.03515625</ixx>
         <ixy>0</ixy>
         <ixz>0</ixz>
-        <iyy>0.008354166666666668</iyy>
+        <iyy>0.03515625</iyy>
         <iyz>0</iyz>
-        <izz>4.166666666666668e-05</izz>
+        <izz>0.00015625000000000003</izz>
       </inertia>
-      <mass>0.1</mass>
+      <mass>0.75</mass>
     </inertial>
       <visual name="secondpendulum_visual">
-        <pose>0 0 0.5 0 0 0</pose>
+        <pose>0 0 0.375 0 0 0</pose>
         <geometry>
-          <box>
-            <size>0.05 0.05 1</size>
-          </box>
+          <cylinder>
+            <radius>0.025</radius>
+            <length>0.75</length>
+          </cylinder>
         </geometry>
+        <material>
+          <script>
+            <uri>file://media/materials/scripts/gazebo.material</uri>
+            <name>Gazebo/Red</name>
+          </script>
+        </material>
       </visual>
     </link>
 
@@ -128,6 +146,9 @@
     <child>secondpendulum_link</child>
     <axis>
       <xyz>0 1 0</xyz>
+      <dynamics>
+        <damping>0.005</damping>
+      </dynamics>
     </axis>
     </joint>
 
