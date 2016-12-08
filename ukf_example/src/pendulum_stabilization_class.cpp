@@ -1,12 +1,13 @@
 #include <pendulum_stabilization_class.h>
+#include <ukf_example_srvs/ComputeCommand.h>
+
+#include <ros/console.h>
+#include <sdf/Param.hh>
 
 #include <boost/bind.hpp>
 
 #include <stdio.h>
 
-#include <sdf/Param.hh>
-
-#include <ukf_example_srvs/ComputeCommand.h>
 
 namespace gazebo
 {
@@ -77,7 +78,9 @@ void PendulumStabilizationPlugin::OnUpdate(const common::UpdateInfo & /*_info*/)
 
   double current_time = model_->GetWorld()->GetSimTime().Double();
 
-  if((current_time - previous_iteration_time_) > 0.02) {
+  double elasped_time = (current_time - previous_iteration_time_);
+
+  if(elasped_time > 0.01) {
     previous_iteration_time_ = current_time;
 
     ukf_example_srvs::ComputeCommand srv;
@@ -86,11 +89,13 @@ void PendulumStabilizationPlugin::OnUpdate(const common::UpdateInfo & /*_info*/)
     srv.request.dot_x     = cart_joint_->GetVelocity(0);
     srv.request.theta     = first_pendulum_joint_->GetAngle(0).Radian();
     srv.request.dot_theta = first_pendulum_joint_->GetVelocity(0);
-    srv.request.phi       = second_pendulum_joint_->GetAngle(0).Radian();
-    srv.request.dot_phi   = second_pendulum_joint_->GetVelocity(0);
+    srv.request.phi       = first_pendulum_joint_->GetAngle(0).Radian() + second_pendulum_joint_->GetAngle(0).Radian();
+    srv.request.dot_phi   = first_pendulum_joint_->GetVelocity(0) + second_pendulum_joint_->GetVelocity(0);
 
     if(control_client_.call(srv)) {
       force_command_= srv.response.force;
+      //ROS_INFO("Sent: %f %f %f %f %f %f",srv.request.x,srv.request.dot_x,srv.request.theta,srv.request.dot_theta,srv.request.phi,srv.request.dot_phi);
+      //ROS_INFO("Received: %f ", force_command_);
     }
 
   }
