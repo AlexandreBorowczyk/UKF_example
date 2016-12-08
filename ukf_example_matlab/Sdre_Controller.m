@@ -16,11 +16,18 @@
 % 3. Restart MATLAB and verify that you can use the custom messages. 
 %    Type "rosmsg list" and ensure that the output contains the generated
 %    custom message types.
+clear all
 
+global state command
 
-rosinit('aborowczyk-XPS')
+try
+    rosinit('aborowczyk-XPS')
+catch
+    rosshutdown
+    rosinit('aborowczyk-XPS')
+end
 
 server = rossvcserver('ComputeCommandDip','ukf_example_srvs/ComputeCommand',@serviceCallback);
-disp('SrvServer Created')
+disp('SrvServer Running')
 
 % rosshutdown
