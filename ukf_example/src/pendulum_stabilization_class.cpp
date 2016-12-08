@@ -11,7 +11,9 @@
 namespace gazebo
 {
 
-PendulumStabilizationPlugin::PendulumStabilizationPlugin() : ModelPlugin() {
+PendulumStabilizationPlugin::PendulumStabilizationPlugin() :ModelPlugin(),
+  force_command_(0.0),
+  previous_iteration_time_(0.0) {
   gzmsg << "PendulumStabilizationPlugin: Created.\n";
 }
 
@@ -88,10 +90,11 @@ void PendulumStabilizationPlugin::OnUpdate(const common::UpdateInfo & /*_info*/)
     srv.request.dot_phi   = second_pendulum_joint_->GetVelocity(0);
 
     if(control_client_.call(srv)) {
-      cart_joint_->SetForce(0,srv.response.force);
+      force_command_= srv.response.force;
     }
 
   }
+  cart_joint_->SetForce(0,force_command_);
 }
 
 physics::JointPtr PendulumStabilizationPlugin::GetJoint(const std::string& element_name) {

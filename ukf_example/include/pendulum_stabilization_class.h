@@ -42,6 +42,8 @@ class GAZEBO_VISIBLE PendulumStabilizationPlugin : public ModelPlugin {
 
         double previous_iteration_time_;
 
+        double force_command_;
+
 };
 
 
