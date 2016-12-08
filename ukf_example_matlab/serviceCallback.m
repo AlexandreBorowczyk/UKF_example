@@ -7,17 +7,6 @@ response = defaultrespmsg;
 
 % System parameters
 
-u = 0;
-
-D = zeros(3);
-C = zeros(3);
-G = zeros(3);
-
-
-coder.extrinsic('dare');
-
-% System parameters
-
 m0 = 1.5;  % kg
 m1 = 0.5;  % kg
 m2 = 0.75; % kg
@@ -61,6 +50,7 @@ H = [1 0 0]';
 
 % SDRE controler
 if 0
+    G = zeros(3);
     if(deg2rad(0.0001) < abs(theta1))
         G(2,2) = -f1 * sin(theta1)/theta1;
     end
@@ -85,9 +75,14 @@ ts = 0.02; % s
 AA = expm(A*ts);
 BB = B*ts;
 
-[~,~,K] = dare(AA,BB,Q,R);
+u = 0;
 
-u = -1*K*x;
+try
+    [~,~,K] = dare(AA,BB,Q,R);
+    u = -1*K*x;
+catch
+    rosshutdown
+end
 
 response.Force = u;
 
