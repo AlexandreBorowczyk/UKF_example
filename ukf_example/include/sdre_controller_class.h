@@ -1,6 +1,8 @@
 #ifndef SDRECONTROLLER_H_
 #define SDRECONTROLLER_H_
 
+#include <eigen3/Eigen/Dense>
+
 class SdreController {
     public:
         explicit SdreController();
@@ -10,7 +12,10 @@ class SdreController {
 
         void OnUpdate();
 
-    private:
+        EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+
+        private:
+
 
 };
 

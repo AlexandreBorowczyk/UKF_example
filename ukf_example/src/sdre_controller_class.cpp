@@ -2,6 +2,8 @@
 
 #include <stdio.h>
 
+#include <eigen3/unsupported/Eigen/src/MatrixFunctions/MatrixExponential.h>
+
 SdreController::SdreController() {
   // Do nothing
 }
