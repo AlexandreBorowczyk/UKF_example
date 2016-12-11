@@ -8,6 +8,9 @@ find_package(catkin REQUIRED COMPONENTS
   ukf_example_srvs
 )
 
+find_package(Eigen3 REQUIRED)
+add_definitions(${EIGEN3_DEFINITIONS})
+
 # Depend on system install of Gazebo
 find_package(gazebo REQUIRED)
 find_package(Boost REQUIRED COMPONENTS thread)
@@ -17,6 +20,7 @@ set(CMAKE_CXX_COMPILER "/usr/bin/clang")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14 ${GAZEBO_CXX_FLAGS}")
 include_directories(include
   /usr/include
+  ${Eigen3_INCLUDE_DIRS}
   ${Boost_INCLUDE_DIR}
   ${catkin_INCLUDE_DIRS}
   ${GAZEBO_INCLUDE_DIRS}
@@ -63,4 +67,9 @@ target_link_libraries(pendulum_stabilization
 # SDRE controller
 add_library(sdre_controller SHARED
     src/sdre_controller_class.cpp
+    )
+
+target_link_libraries(sdre_controller
+    ${catkin_LIBRARIES}
+    ${Eigen3_LIBRARIES}
     )
