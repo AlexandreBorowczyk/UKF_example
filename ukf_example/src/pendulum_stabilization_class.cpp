@@ -80,7 +80,7 @@ void PendulumStabilizationPlugin::OnUpdate(const common::UpdateInfo & /*_info*/)
 
   double elasped_time = (current_time - previous_iteration_time_);
 
-  if(elasped_time > 0.01) {
+  if(0.01 < elasped_time) {
     previous_iteration_time_ = current_time;
 
     ukf_example_srvs::ComputeCommand srv;
