@@ -91,7 +91,7 @@ double SdreController::ComputeCommand(
   A *= ts;
   Eigen::Matrix<double,6,6> Phi = A.exp();
 
-  Eigen::Matrix<double,6,6> Gamma = B * ts;
+  Eigen::Matrix<double,6,1> Gamma = B * ts;
 
 
 }
@@ -108,6 +108,6 @@ Eigen::Matrix<double,6,6> SdreController::SolveDare(
   R_tm.block<6,1>(1,0)= Gamma;
 
   Eigen::Matrix<double,13,13> Q_tm = Eigen::Matrix<double,13,13>::Zero();
-  Q_tm.block<12,12>(0,1) = Eigen::Matrix<double,13,13>::Identity();
+  Q_tm.block<12,12>(0,1) = Eigen::Matrix<double,12,12>::Identity();
   Q_tm(12,0) = 1.0;
 }
