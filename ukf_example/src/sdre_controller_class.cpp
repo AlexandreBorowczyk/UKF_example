@@ -65,6 +65,35 @@ double SdreController::ComputeCommand(
   C(1,2) =  d_(1,2) * sin_delta_thetas * X(6);
   C(2,1) = -1.0 * d_(2,1) * sin_delta_thetas * X(5);
 
+  Eigen::Matrix<double,3,3> G = Eigen::Matrix<double,3,3>::Zero();
+  if (1.0e-10 < std::abs(X(1))) {
+    G(1,1) *= -1.0 * f_(1) * sin_theta1 / X(1);
+  }
+  if (1.0e-10 < std::abs(X(2))) {
+    G(2,2) *= -1.0 * f_(2) * sin_theta2 / X(2);
+  }
+
+  Eigen::Matrix<double,6,6> A = Eigen::Matrix<double,6,6>::Zero();
+  A.block<3,3>(0,3) = Eigen::Matrix<double,3,3>::Identity();
+  A.block<3,3>(3,0) = -1.0 * D.inverse() * G;
+  A.block<3,3>(3,3) = -1.0 * D.inverse() * C;
+
+
+  Eigen::Matrix<double,3,1> H = Eigen::Matrix<double,3,1>::Zero();
+  H(0) = 1.0;
+
+  Eigen::Matrix<double,6,1> B = Eigen::Matrix<double,6,1>::Zero();
+  B.block<3,1>(3,0) = D.inverse() * H;
+
+  double ts = current_time - previous_time_;
+  previous_time_ = current_time;
+
+  A *= ts;
+  Eigen::Matrix<double,6,6> Phi = A.exp();
+
+  Eigen::Matrix<double,6,6> Gamma = B * ts;
+
+
 }
 
 
