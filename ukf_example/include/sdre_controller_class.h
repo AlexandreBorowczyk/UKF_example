@@ -9,30 +9,29 @@ class SdreController {
                 const double & cart_mass,
                 const double & pendulum1_mass,
                 const double & pendulum2_mass,
-                const double & pendulum1_length_,
-                const double & pendulum2_length_);
+                const double & pendulum1_length,
+                const double & pendulum2_length);
 
         ~SdreController();
 
         double ComputeCommand(
                 const Eigen::Matrix<double,6,1> & X,
-                const double & iteration_time);
+                const double & current_time);
 
 
 
     private:
 
         void ComputeCoef();
+        Eigen::Matrix<double,6,6> SolveDare(
+                const Eigen::Matrix<double,6,6> & Phi,
+                const Eigen::Matrix<double,6,1> & Gamma,
+                const Eigen::Matrix<double,6,6> & Q,
+                const double & R);
 
-        // System physical param.
-        double cart_mass_;
-        double pendulum1_mass_;
-        double pendulum2_mass_;
-        double pendulum1_length_;
-        double pendulum2_length_;
 
         // Computed coef.
-        Eigen::Matrix<double,6,6> d_;
+        Eigen::Matrix<double,3,3> d_;
         Eigen::Matrix<double,1,3> f_;
 
 
