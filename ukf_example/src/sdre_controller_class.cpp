@@ -103,4 +103,11 @@ Eigen::Matrix<double,6,6> SdreController::SolveDare(
     const Eigen::Matrix<double,6,6> & Q,
     const double & R)
 {
+  Eigen::Matrix<double,13,1> R_tm = Eigen::Matrix<double,13,1>::Zero();
+  R_tm(0,0) = R;
+  R_tm.block<6,1>(1,0)= Gamma;
+
+  Eigen::Matrix<double,13,13> Q_tm = Eigen::Matrix<double,13,13>::Zero();
+  Q_tm.block<12,12>(0,1) = Eigen::Matrix<double,13,13>::Identity();
+  Q_tm(12,0) = 1.0;
 }
